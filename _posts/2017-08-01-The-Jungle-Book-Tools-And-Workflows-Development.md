@@ -8,6 +8,9 @@ subtitle: Realistic Procedural Fur-Water Interaction.
 
 Here's a collection of my my work on Disney's The Jungle Book.
 
+- Supervising all the Houdini tasks for Creature FX for The Jungle Book and making sure
+all the tools functioned correctly and all the shots went on without any technical issues.
+
 - Most of my work on the show involved developing entire suite of Fur tools
 in Houdini for realistic and Procedural Fur - Water interaction.
 
