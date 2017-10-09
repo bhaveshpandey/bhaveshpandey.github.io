@@ -4,6 +4,9 @@ date: 2017-10-08
 author: Bhavesh Pandey
 title: The Jungle Book - Tools and Workflows Development.
 subtitle: Realistic Procedural Fur-Water Interaction.
+tags:
+- houdini
+- procedural
 ---
 
 Here's a collection of my my work on Disney's The Jungle Book.
@@ -31,6 +34,3 @@ which could then be used in Maya via Houdini Engine.
 
 <iframe src="https://player.vimeo.com/video/200102186" width="640" height="360" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
 <p><a href="https://vimeo.com/200102186">TheJungleBookToolsAndWorkflowsDevelopmentREEL2017</a> from <a href="https://vimeo.com/bhaveshpandey">bhavesh pandey</a> on <a href="https://vimeo.com">Vimeo</a>.</p>
-
-**NOTE:** Some of the shots presented above have been run by other artists in my team using the tools/workflows
-developed by myself (specially the shots which are not from the Bare Necessities sequence).

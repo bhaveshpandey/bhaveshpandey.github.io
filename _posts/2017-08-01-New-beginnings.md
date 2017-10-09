@@ -4,6 +4,9 @@ date: 2017-10-08
 author: Bhavesh Pandey
 title: New Beginnings.
 subtitle: New webpage using Jekyll and Github pages!
+tags:
+- Jekyll
+- Github Pages
 ---
 
 Few months ago, I came across [Jekyll](https://jekyllrb.com) and decided to test it out on my webpage.
