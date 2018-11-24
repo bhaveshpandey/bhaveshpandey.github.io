@@ -12,6 +12,8 @@ tags:
 - dops
 ---
 
+<!--Will attach a hipfile with empty assets as a placeholder. For longer term need to create a system to have a houdini file hosted in the git repo and linked in the posts. The files should be in a self contained dir and env so they open and run without any errors. -->
+
 ## Background
 
 **dopproperties** started off as a project to make some of my tools more modular, flexible and maintainable. The idea was very simple: *create a framework which would allow editing the DOP (dynamic operators) data tree using the SOP (surface operators) context.* There were few constraints I wanted in place to shape its development. The framework needed to be:
@@ -30,9 +32,9 @@ tags:
 
 DOP context in Houdini is quite a different than other contexts when it comes to the flow of data. This often makes it very difficult for beginners to get a good grasp on how to efficietly and correctly setup the operators in this context.
 
-There is another, perhaps more significant difference (more so for managers than for artists); working within this context requires a Houdini Master license or its recent new avatar: Houdini FX license. This license is more expensive than other varieties.
+There is another, perhaps more significant difference (more so for managers than for artists); working within this context requires a Houdini Master license or if you prefer its new name, Houdini FX license. This license is more expensive than other variants.
 
-Most of the visual effects facilities try to wrap up their DOP context tools into SOP abstractions for example, a basic pyro solver or basic fluid solver abstraction within SOP context. This entails wrapping up a basic setup in DOP which would accept user inputs and create some sort of output after running a simulation (there are various motivations behind this and I will not discuss those here to keep this post as technically relevent as possible).
+Most visual effects facilities try to wrap up their DOP context tools into SOP abstractions for example, a basic pyro solver or basic fluid solver abstraction within SOP context. This entails wrapping up a basic setup in DOP which would accept user inputs and create some sort of output after running a simulation (there are various motivations behind this and I will not discuss those here to keep this post as technically relevent as possible).
 
 Unfortunately, every iteration of a SOP abstraction I have seen, is either very hacky, ugly, rigid or in most cases a combination of all these in various degrees.
 
@@ -49,14 +51,17 @@ Each **dopproperties** sop is designed to clearly reflect this as they have almo
 
 The following image shows a simple RBD simulation which has been setup using **dopproperties** in the SOP context. This allows users to modify, add remove objects from the simulation without ever needing to dive inside the DOP context.
 
+<!-- Need to check how we can align the two figures side by side and have captions below them.-->
 ![Simple RBD simulation using dopproperties](/img/projects/dopproperties/simple_01_sop.jpg)
 
 The following image shows the corressponding DOP graph which would allow **dopproperties** to correctly interpret and solve incoming data.
 
+<!-- Need to check how we can align the two figures side by side and have captions below them.-->
 ![Simple RBD simulation using dopproperties](/img/projects/dopproperties/simple_01_dop.jpg)
 
 Lets have a closer look at what this SOP graph means and how it is interpreted.
 
+<!-- Need to link to videos demonstrating each step? -->
  1. We setup our input source geometries (grid, rubbertoy and crag) with primitive attribute "name" as is common with RBD objects.
 
  2. Add gravity force to relevent objects.
@@ -80,3 +85,12 @@ Now lets have a look at the DOP graph for this simple setup.
  4. Add in *Apply Dop Properties* dop which interprets all the data and modifies the dop data tree. We do this before the rbd solver is run and only at the initalization stage. This is achieved using the *Gas Intermittent Solver* dop.
 
 Since *Apply Dop Properties* dop is a solver, we can seamlessly combine it with all other houdini microsolvers.
+
+## Benefits
+
+So we now have something which is similar to one of those *basic rigidbody solver* templates. It would seem so, however you can now completely control your dop data tree in sops. If you want to add more forces and tweak specific forces on specific objects, define new type of object, add volumetric fields to any specific objects you can! There is absolutely no need to dive inside the dop context. In fact when we look at our dop graph, there are no forces in our graph, no gravity force, no visualisaton modifiers and no *Active Value* dop to make any object passive! All of this is being driven by sops!
+
+If we want to update any property per frame or key-frame any property we can using the same setup with one slight modification. I will conver this example soon in another post.
+
+This wraps up a quick intro to **dopproperties** and I will go over some of the more technical aspects in later posts.
+I am well aware, rbd solver is outdated and most of the artists favour bullet solver, however the intention here is to demonstrate the framework. We will go over few other examples in future posts.
