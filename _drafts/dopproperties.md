@@ -12,11 +12,13 @@ tags:
 - dops
 ---
 
-<!--Will attach a hipfile with empty assets as a placeholder. For longer term need to create a system to have a houdini file hosted in the git repo and linked in the posts. The files should be in a self contained dir and env so they open and run without any errors. -->
+<!--Will attach a hipfile with empty assets as a placeholder. For longer term need to create a system to have a houdini file hosted in the git repo and linked in the posts. The files should be in a self contained dir and env so they open and run without any errors.
+
+There should also be a shell command to easily download the data onto a directory. -->
 
 ## Background
 
-**dopproperties** started off as a project to make some of my tools more modular, flexible and maintainable. The idea was very simple: *create a framework which would allow editing the DOP (dynamic operators) data tree using the SOP (surface operators) context.* There were few constraints I wanted in place to shape its development. The framework needed to be:
+**dopproperties** started off as a project to make some of my tools more modular, flexible and maintainable. The idea was very simple: *create a framework which would allow editing the DOP (dynamic operators) data tree using the SOP (surface operators) context.* There were few constraints I wanted in place to shape its design and development. The framework needed to be:
 
 * aligned with data flow model in DOPs
 
@@ -70,9 +72,9 @@ Lets have a closer look at what this SOP graph means and how it is interpreted.
 
  4. We only need the ground to passively participate in the simulation, meaning, it should only affect other objects and not be affected by any of these obejcts. This is specified by using the *Add Active Value Data* sop. It tells the rigid body solver in dops to treat it as a passive object.
 
- 5. If we run the simulation now, the objects will behave in a manner rigid bodies should, however, we will notice the collisions are not accurate. This is because the objects are fairly large and there is not enough detail in their collision representations. This is remedied using the *Add Sdf Representation* sop and increasing the *divisions*.
+ 5. If we run the simulation now, the objects will behave in a manner rigid bodies should, however, we will notice the collisions are not accurate. This is because the objects are fairly large and there is not enough detail in their collision representations. This is remedied using the *Add Sdf Representation* sop and increasing the *divisions* (as you would have done if you were working inside dops).
 
-All these geometry datastreams are then sent through the DOP network which in turn interprets this data and runs the simulation.
+All these geometry datastreams are then sent through the DOP network which in turn interprets this data and runs the simulation using one of the custom solvers *Apply Dop Properties*. This solver is responsible for interpreting incoming data and modifying the data tree inside dops. Since *Apply Dop Properties* dop is a solver, we can seamlessly combine it with all other houdini microsolvers.
 
 Now lets have a look at the DOP graph for this simple setup.
 
@@ -84,7 +86,6 @@ Now lets have a look at the DOP graph for this simple setup.
 
  4. Add in *Apply Dop Properties* dop which interprets all the data and modifies the dop data tree. We do this before the rbd solver is run and only at the initalization stage. This is achieved using the *Gas Intermittent Solver* dop.
 
-Since *Apply Dop Properties* dop is a solver, we can seamlessly combine it with all other houdini microsolvers.
 
 ## Benefits
 
