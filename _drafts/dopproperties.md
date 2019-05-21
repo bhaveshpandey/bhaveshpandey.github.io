@@ -70,9 +70,14 @@ Lets have a closer look at what this SOP graph means and how it is interpreted.
 
  3. Add visualisation data to the objects. By default all the objects are visible inside dop context.
 
+    <iframe src="https://player.vimeo.com/video/302950099" width="640" height="400" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe>
+
+
  4. We only need the ground to passively participate in the simulation, meaning, it should only affect other objects and not be affected by any of these obejcts. This is specified by using the *Add Active Value Data* sop. It tells the rigid body solver in dops to treat it as a passive object.
 
  5. If we run the simulation now, the objects will behave in a manner rigid bodies should, however, we will notice the collisions are not accurate. This is because the objects are fairly large and there is not enough detail in their collision representations. This is remedied using the *Add Sdf Representation* sop and increasing the *divisions* (as you would have done if you were working inside dops).
+
+     <iframe src="https://player.vimeo.com/video/302954772" width="640" height="400" frameborder="0" webkitallowfullscreen mozallowfullscreen allowfullscreen></iframe><Paste>
 
 All these geometry datastreams are then sent through the DOP network which in turn interprets this data and runs the simulation using one of the custom solvers *Apply Dop Properties*. This solver is responsible for interpreting incoming data and modifying the data tree inside dops. Since *Apply Dop Properties* dop is a solver, we can seamlessly combine it with all other houdini microsolvers.
 
@@ -87,9 +92,26 @@ Now lets have a look at the DOP graph for this simple setup.
  4. Add in *Apply Dop Properties* dop which interprets all the data and modifies the dop data tree. We do this before the rbd solver is run and only at the initalization stage. This is achieved using the *Gas Intermittent Solver* dop.
 
 
+<!-- 
+Maybe benefits should be succint and presented as bullet points???
+-->
+
+<!--
+Modular:  Each operator has a very specific purpose.
+
+Extensible:  The toolset can be easily extended using the **dopproperties** python api.
+
+User familiarity:  The toolsets aligns perfectly to the data flow in DOPs. 
+
+UI:  The UI of each operator is same as their corressponding dop operator.
+
+-->
+
 ## Benefits
 
-So we now have something which is similar to one of those *basic rigidbody solver* templates. It would seem so, however you can now completely control your dop data tree in sops. If you want to add more forces and tweak specific forces on specific objects, define new type of object, add volumetric fields to any specific objects you can! There is absolutely no need to dive inside the dop context. In fact when we look at our dop graph, there are no forces in our graph, no gravity force, no visualisaton modifiers and no *Active Value* dop to make any object passive! All of this is being driven by sops!
+We now have something which is similar to one of those *basic rigidbody solver* templates. It would seem so, however you can now completely control your dop data tree in sops. If you want to add more forces and tweak specific forces on specific objects, define new type of object, add volumetric fields to any specific objects you can! There is absolutely no need to dive inside the dop context. In fact when we look at our dop graph, there are no forces in our graph, no gravity force, no visualisaton modifiers and no *Active Value* dop to make any object passive! All of this is being driven by sops!
+
+In fact if we really wanted to show off, we could define a totally custom type of dop object(akin to RBD object, Smoke object etc) in sops, on the fly using **dopproperties**!
 
 If we want to update any property per frame or key-frame any property we can using the same setup with one slight modification. I will conver this example soon in another post.
 
