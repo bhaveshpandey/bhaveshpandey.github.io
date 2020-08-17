@@ -30,7 +30,7 @@ For the implementation, I wanted to stress on certain factors in the specificati
 
 1. Efficiency - tools must be efficient and avoid any redundant computations/instructions.
 
-2. Ease of maintainance - toolset must be easy to maintain. This applies to both the codebase, as well as the design of the tools and workflows resulting from it.
+2. Ease of maintenance - toolset must be easy to maintain. This applies to both the codebase, as well as the design of the tools and workflows resulting from it.
 
 3. Core tech sitting at the center of various tools/visualizers leveraging it - this would allow me to roll out updates efficiently and at the same time reduce code duplication.
 
