@@ -3,7 +3,7 @@ layout: post
 title: Texture Instancing.
 subtitle: Instance textures based on point cloud.
 header-img: img/projects/texture_instancing/rtoy_tex_instancing.jpg
-date: 2020-08-17
+date: 2020-08-18
 tags:
 - houdini
 - vex
@@ -131,3 +131,44 @@ Extending this further, we will also hook in our displacement maps specific to e
 <iframe width="420" height="236" src="https://www.youtube.com/embed/hg-PO1tSHZA?autoplay=1&loop=1&playlist=hg-PO1tSHZA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 If you look closely in the above example, you will see that the silhouette is being broken by displacements which are computed using the various displacement maps as defined by the point cloud.
+
+
+## Conclusion
+
+
+Its important to note that each technique comes with its own advantages and disadvantages. Texture instancing in itself is not a magic bullet solution for all your procedural texturing needs! Its a tool with specific set of strengths.
+
+* It allows for a convenient way of adding variation and visual complexity in terms of textures.
+
+* It doesnt require the geometry to have UV maps.
+
+* It is really convenient if the look of the geometry needs to be modified based off a trigger event.
+
+* Really powerful tool to blend together different textures to add complexity.
+
+* Helps in breaking the tiling patterns visible in large scale environments.
+
+
+However, it also comes with its own weaknesses.
+
+* Its difficult to art direct. For specific aesthetics, your better off painting custom textures.
+
+* The fact that my implementation relies on Tri-Planar Projection (TPP is probably the most suitable algorithm here anyway), means its slower than standard shaders.
+
+* It adds another dependency (point cloud) into the mix. This is not necessarily a drawback but does requrie decent pipeline support to track dependencies.
+
+* The texture scaling might get tricky as we can only affect it using a global multiplier (which would affect all textures) and a per point scale multiplier.
+
+* If displacements of different maps being used are not normalized or within reasonable range or each other, there may be artefacts introduced due to the blending.
+
+
+<h2>Improvements</h2>
+
+
+For the second development sprint, there are few more features I would like to add.
+
+One of the things I want to implement next is depth based blending which is quite standard in game engines such as Unreal Engine. An example of this can be seen in this [article](https://www.gamasutra.com/blogs/AndreyMishkinis/20130716/196339/Advanced_Terrain_Texture_Splatting.php).
+
+Additionally, considering large landscapes are quite a common use case for this, I would like to add a planar mode for computing UV space to speed up the computations.
+
+Expose few texture sampling filters (box, gaussian, blackman, sinc etc) as parameters for users.
