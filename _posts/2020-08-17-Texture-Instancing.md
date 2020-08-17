@@ -21,22 +21,24 @@ For one of my personal projects, I was in need of generating a large scale terra
 
 ## Introduction
 
-Keeping in mind this background, I decided to implement <a href="https://developer.download.nvidia.com/books/HTML/gpugems/gpugems_ch20.html" target="_blank"><b>Texture Bombing</b></a> technology using Houdini's <a href="https://www.sidefx.com/docs/houdini/vex/index.html" target="_blank"><b>VEX</b></a> (Vector Expressions) language. The idea was simple, apply a basic procedural shader to the terrain as a base layer and use texture bombing for localised texture overrides. This would allow me to layer visual complexity dynamically. For the rest of the post, I refer to texture bombing as texture instancing as it makes more sense to me than the original term (albeit instancing technically means something different...but so does bombing).
+Keeping in mind the large scale of the terrain and having a strong aversion to anything manual, I decided to implement <a href="https://developer.download.nvidia.com/books/HTML/gpugems/gpugems_ch20.html" target="_blank"><b>Texture Bombing</b></a> technology using Houdini's <a href="https://www.sidefx.com/docs/houdini/vex/index.html" target="_blank"><b>VEX</b></a> (Vector Expressions) language. The idea was simple, apply a basic procedural shader to the terrain as a base layer and use texture bombing for spatially localised texture overrides. This would allow me to layer visual complexity dynamically. For the rest of the post, I will refer to texture bombing as texture instancing as it makes more sense to me than the original term (albeit instancing technically means something different...but so does bombing).
 
 Texture instancing is a technique which is fairly similar to geometry instancing in principle. The idea is to read specific textures on disk at specific position and project it on specified input geometry. This is achieved by writing the texture data(filepaths, colour tint etc) onto a point cloud which which also determines the position where the texture is projected onto the specified geometry.
 
 
-I also wanted to stress on certain factors in the specification of the toolset, some of those were as follows.
+For the implementation, I wanted to stress on certain factors in the specification of the toolset, some of those were as follows.
 
 1. Efficiency - tools must be efficient and avoid any redundant computations/instructions.
 
-2. Ease of maintainance - toolset must be easy to maintain. This applies to both the codebase, as well as the design of the tools/workflows.
+2. Ease of maintainance - toolset must be easy to maintain. This applies to both the codebase, as well as the design of the tools and workflows resulting from it.
 
 3. Core tech sitting at the center of various tools/visualizers leveraging it - this would allow me to roll out updates efficiently and at the same time reduce code duplication.
 
 4. Seamless transition of the tech in between Houdini's contexts - often times, different variants of tools are developed for different contexts in Houdini (an implementation for the shader, another implementation for SOP context and another for DOPs etc) leading to duplication of work. **3** also helps in mitigating this.
 
-To accomplish this, I wrote the core technology suite  in CVEX which is then used to create shaders and visualisers. This helped in reducing code rendundancy.
+5. Separation of implicit UV space creation from sampling of textures - this would allow me to add more blending modes in future easily.
+
+To accomplish this, I wrote the core technology suite  in CVEX which is then used to create shaders and visualisers. This helped in reducing code rendundancy as both SOP tools and shader tools use the same code. It also enforces visual parity between the SOP visualizations and the shaders used for Karma/Mantra renders.
 
 The tool is very generic, to the point that it can be thought of purely as a number cruncher. It performs following steps and outputs the specified data.
 
@@ -50,7 +52,7 @@ The tool is very generic, to the point that it can be thought of purely as a num
 
 5. Output the value.
 
-This can be performed for any kind of data stored in the texture maps (colour, displacements, normals, roughness etc).
+This can be performed for any kind of data stored in texture maps (colour, displacements, normals, roughness etc).
 
 # Use cases
 
