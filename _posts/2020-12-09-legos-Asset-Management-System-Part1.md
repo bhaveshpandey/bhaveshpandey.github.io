@@ -37,7 +37,7 @@ Without going into too much detail in the interest of brevity, let me outline se
 
 Now that we have few terms out of the way, lets have a look at a typical production use case.
 
-Following is a lookdev test I did using the amazing Skaarj fanart model created by **[Ben Erdt](https://www.artstation.com/artwork/q24my)**.
+Following is a lookdev test I did using the amazing Skaarj fan-art model created by **[Ben Erdt](https://www.artstation.com/artwork/q24my)**.
 
 {% include image.html url="/img/projects/legos/skaarj_forest_env_test_1280.gif" description="Figure 1: QC of Skaarj Look dev, rendered using Houdini's Karma renderer." %}
 
@@ -61,6 +61,7 @@ Quite a few assets were used to generate the above image and we can deconstruct 
 * Lights
     * forest light rig
     * Studio light rig (to calibrate the materials in a nuetral look dev environment)
+    * Hero light rig
     * HDR for Image based lighting
 
 * Camera
@@ -158,4 +159,4 @@ This year has kept me very busy. There were moments when I would wonder if this 
 
 There is still a lot of work to be done in expanding the ancilliary tooling for **legos**. I am looking forward to implementing a feature rich Asset Browser, an application for production analytics as well as continuing integration of **legos** into Houdini, Blender and Gaffer. The new year looks very promising indeed!
 
-I hope this inspires you to think about how you can benefit from an AMS and also wets your apetite for graph based databases.
+I hope this inspires you to think about how you can benefit from an AMS and also wets your appetite for graph based databases.
