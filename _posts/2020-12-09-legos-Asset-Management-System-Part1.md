@@ -1,0 +1,161 @@
+---
+layout: post
+title: legos - An asset management system - Part 1
+subtitle: Sneak peak, early PDG/Houdini integration and database model overview.
+header-img: ../img/projects/legos/legos_pdg_header_mod.jpg
+date: 2020-12-09
+tags:
+- Asset Management System
+- Graph Database
+- Neo4j
+- Cypher
+- Houdini
+- PDG
+- Procedural Dependency Graph
+---
+
+## Background
+
+This time last year I started writing an Asset Management System(AMS) **legos** for a long term personal project. The system would be central to the pipeline I am developing in tandem to support the production of the project. Having worked at all the major VFX facilities in London and studied their pipelines closely, I realised that a good AMS (including the tools required to integrate it into the pipeline and various DCCs) is key to having a robust and scalable pipeline for VFX production.
+
+Almost all the major studios have their own implementation of an AMS, which sits at the heart of their pipeline. Some are state of the art while others are decent. However, an AMS in not a magic bullet solution, its a tool which requires to be properly designed and intergrated into the pipeline. A lot of places get this part wrong. They design an AMS but its integration into the pipeline and user interactivity is quite lacking; leading to obnoxius workflows which steal away the time artists should be spending on aesthetic decisions to make the work look better.
+
+
+## Introduction
+
+**legos** is an asset management system built specifically for managing assets generated during production of a VFX project. It is written completely in Python3 and leverages Neo4j's graph database technology as its primary database workhorse. **legos** builds upon simple abstract constructs such as Assets, Packages, Relationships etc to quickly build and track complex dependencies.
+
+Without going into too much detail in the interest of brevity, let me outline select few terms we will encounter in subsequent sections.
+
+* **Asset** - all the CG content generated during production of a show, is an asset. Asset has several specializations which give additional meaning and context to them. Such as CameraAsset, LightAsset, FileAsset etc. I might use the term Asset, Element, Digital Content interchangeably in following sections.
+
+* **Package** - is technically also an asset. However, more appropriately its a hierarchical collection of Assets. Packages too have several specializations such as LookDevPackage, ShotPackage, CharacterPackage etc.
+
+* **Relationships** - define how the entities interface with each other (these also have special meaning within the database and can allow us to run quite interesting analytics).
+
+* **Revisions** - one of the typical VFX jargons you hear a lot in VFX discussions is Dailies. Revisions are dailies submissions within the **legos** ecosystem. Revisions too have few specializations such as QCRevisionSub, AssetRevisionSub etc (we will only look at QCRevisionSub in this example).
+
+Now that we have few terms out of the way, lets have a look at a typical production use case.
+
+Following is a lookdev test I did using the amazing Skaarj fanart model created by **[Ben Erdt](https://www.artstation.com/artwork/q24my)**.
+
+{% include image.html url="/img/projects/legos/skaarj_forest_env_test_1280.gif" description="Figure 1: QC of Skaarj Look dev, rendered using Houdini's Karma renderer." %}
+
+In a typical VFX pipeline, any CG element which needs to be added to a shot, goes through numerous look development cycles with constant adjustment requests/notes from the client. It is vital that all the information that went into generating an image (or an asset), is tracked in the database to be able to regenerate the approved version, requiring correct version of each an every asset that was used to generate approved content.
+
+Quite a few assets were used to generate the above image and we can deconstruct it into the following ingredients:
+
+* 3D model
+
+* Textures
+    * Albedo map
+    * Bump map
+    * Normal map
+    * Roughness map
+    * Reflectivity map
+
+* Materials (which will be using above textures)
+
+* Material/look bindings to the model components (head, hair, armour etc)
+
+* Lights
+    * forest light rig
+    * Studio light rig (to calibrate the materials in a nuetral look dev environment)
+    * HDR for Image based lighting
+
+* Camera
+
+* Render settings (each lookdev iteration can have different render settings which might have huge implications for the look)
+
+In the above image (Figure 1), I did not use the Skaarj rig to pose the character or add any animation so there are no dependencies on those components. The screenshot below (Figure 2) shows these components and the relationships they have with each other.
+
+{% include image.html url="/img/projects/legos/rv_sub_and_deps.png" description="Figure 2: QC Render and asset dependencies in the database." %}
+
+All of the above content is generated by artists in separate departments, using different/specialized DCCs. These assets are then checked into the database. In the context of above example (QC Render in Figure 1), the model and textures were created by [Ben Erdt](https://www.artstation.com/benerdt) which basically meant that the data had to be ingested into **legos**. This would then bring the data into the AMS.
+
+This process is highlighted by the green box in Figure 3. Additionally, the textures are converted into ACESCG colourspace and converted to **.rat** files which are optimised for Houdini and support mipmaps.
+
+Part of the graph highlighted in blue (Figure 3) shows the stage where the models and any model variants are generated and then published into the database (in our case, the model was ingested and published into the database). This is typically done by an artist from the Modelling department.
+
+Look development stages are highlighted in Figure 3 in red. A typical lookdev workflow is to calibrate and/or build the materials in a neutral studio lighting environment while constantly checking the look in the intended lighting environments (forest, indoors, sunset etc). Its not uncommon for each hero character/asset to have a dedicated lookdev environment. In the above example, we do this by using a **LookDevPackage**. This LookDevPackage contains all the assets which decide the look of a CG element, including the model. It also contains lookdev cameras and light rigs which are used while developing the look and is meant to be self sufficient; meaning, if you were to import Skaarj LookDevPackage into a shot, and hit render, you should get the same image as our QC render above.
+
+This can also be observed in Figure 3. All the assets are shown as yellow nodes, LookDevPackage in the node in green. If you look closely, the relationships clearly show that the Skaarj LookDevPackage contains 2 light rigs (a studio lighting env and a forest env), a camera rig (which may contain multiple cameras for closeup or mid range view and different profiles), materials, material bindings, Skaarj model and QC render settings asset.
+
+{% include image.html url="/img/projects/legos/legos_pdg_graph_skaarj.png" description="Figure 3: legos integration with Houdini's PDG. The section of graph within the green box shows texture ingestion into legos and conversion into ACESCG colourspace. The section in blue shows ingestion of model and creation of variants. Section of the graph in red is where the look dev light rigs, camera rigs are created and published into the database. Materials are also generated/built here using the textures and are bound to the model." %}
+
+The table below (Figure 4) shows all the assets which were used to render the QC for the Skaarj LookDevPackage.
+
+{% include image.html url="/img/projects/legos/qc_dep_data.png" description="Figure 4: Asset dependencies data. These are all the assets used to produce the QC render. The table shows the asset names, uids, versions, users and time of creation of each of the asset dependencies." %}
+
+To generate an image same as Figure (1), all we need to do now is import that specific version of the Skaarj LookDevPackage and render it.
+
+<h2>Houdini integration</h2>
+
+{% include image.html url="/img/projects/legos/legos_pdg_header.jpg" description="Figure 5: Left: A screenshot of all the asset/package dependencies of QC render as represented in the database. Centre (overlaid): a screenshot of the Houdini's TOPs graph used to generate/ingest data and publish into legos. Right: the final QC render for Skaarj  LookDevPackage." %}
+
+**legos** presently is quite well intergrated with Houdini's Task Operators (TOPs), providing all the core utilities to push data into and also pull data from the database.
+
+Following screenshot shows UI for the Get Package TOP which basically pulls a Package from the database.
+
+{% include image.html url="/img/projects/legos/get_pkg_node.png" description="Figure 6: Get Package TOP, responsible for getting Packages from the database based on specified contextual data." %}
+
+Following screenshot shows section of the graph which was used to generate the Skaarj LookDevPackage used for rendering the character using Houdini's new rendering engine Karma.
+
+{% include image.html url="/img/projects/legos/pkg_commit_example.png" description="Figure 7: Sub-graph responsible for generating Skaarj LookDevPackage to generate the QC renders." %}
+
+The next step is to integrate **legos** into Solaris/Light Operators (LOPs). This would allow artists to simply load the Packages into LOPs and start working without any unnecessory marshalling of data (as can be seen Figure 8, I am wrangling data back from TOPs to get the various assets inside LOPs context).
+
+Following screenshot shows the LOPs network which was used to render out the final QC render image.
+
+{% include image.html url="/img/projects/legos/skaarj_lops_graph.png" description="Figure 8: LOPs graph which was used to generate the final QC render." %}
+
+I believe having a tight integration with Houdini's TOPs and LOPs is quite important for me as Houdini is my primary driver.
+Additionally, another one of the many todo tasks is to implement a shotbuilding tool for Houdini, which would pull the published data from the database and build a shot ready for the artist to work on (this ranks lower than LOPs integration since I can already pull in the Packages in TOPs which almost acts like a shotbuild).
+
+However, since I am the guy who will be using these tools, I can choose to put it off in favour of writing an Asset Browser first. One thing which has to be implemented to go with an AMS is an asset browser. An AMS cannot be exploited to the fullest if you are unable to browse it in a meaningful way.
+
+
+## Database
+
+I will not pretend to be a database expert, truth be told, this was my first encounter with database modeling. I first tried out MySQL since its fairly straight-forward to use. After a few attempts, I realised I was having a really hard time getting a good grasp of how to best organise the tables in the database for optimal performance. I had spent a lot of time and effort to design the object models for **legos** and deconstructing them into a bunch of tables just didn't feel right.
+
+Spending a few days researching databases, I came across [Neo4j](https://neo4j.com/product/neo4j-graph-database/) a Graph database which is also open-sourced (community edition). Diving deeper into Neo4j, I was able to translate the object models I had for **legos** into the database models.
+
+Anyone who has used Neo4j, will probably not be able to stop talking about **Cypher**, its query language. And with good reason! Cypher really made querying and playing around with databases enjoyable for me.
+
+## Database modeling
+
+**legos** leverages Neo4j's graph database technology which allows it to execute complex queries and also run analytics using graph algorithms effortlessly.
+
+One of the biggest challenges I faced was versioning of assets/entities in the database. In a traditional database, it would probably be just another entry in a bunch of tables. Its not so straight forward in Neo4j, since a new asset version can have a new set of dependencies (in addition of older dependencies). This means we not only need to version nodes but subgraphs themselves (nodes and connected dependencies etc). After doing some more research, I was able to implement versioning with slight modifications to the object models and schemas. This however is beyond the scope of this article.
+
+Following image shows a bare-bones example of a schema (complete schema of legos will be quite complex to go over in this article). Though a schema is not required in Neo4j I find it helpful as a visual aid and an organisational tool.
+
+{% include image.html url="/img/projects/legos/simple_schema.png" description="Figure 9: Simplified schema for demonstration purposes, showing how the various entities in legos are related." %}
+
+Following screenshot shows a slightly larger part of the database. This is where Neo4j actually starts to shine as a database tool. The visual information that we can get by simply observing the graph lets us quickly identify patterns and visually inspect the database! You can see in the image below (Figure 10), most of the asset nodes are clustered around different **Users** since they are generating a lot of assets. Additionally most of the assets are also clustered around **Packages** which are referencing these assets. You can then run queries which are simply not possible out of the box (or will take quite a lot of python) in other databases such as:
+
+* What are the Packages which have similar contents?
+
+* What Packages share maximum number of assets?
+
+* How long does a complete iteration of an Asset take? (aggregating time taken to generate each dependency of an asset)?
+
+* What is the average iteration time for an Asset?
+
+{% include image.html url="/img/projects/legos/all_nodes.png" description="Figure 10: View of the graph database showing relationships between several entities in legos. Neo4J is a graph database which actually stores data as graphs and is not a layer sitting on top of a regular database." %}
+
+
+## Other DCCs
+
+Other than Houdini, I intend to get basic [Blender](https://www.blender.org/) integration for the first beta release of **legos**. Blender has improved massively to a point where newer studios will start looking at it favourably. Older, already established studios are usually slow to pick up new DCCs just because it might be more work to introduce a new application into the pipeline than the benefits they expect to get from it.
+
+Additionally [Gaffer](https://www.gafferhq.org) integration would be pretty cool too. Gaffer is open source and most importantly a node based DCC. I have a strong aversion towards non-node based applications (I know Blender too is a non node based DCC, but its free, has EEVEE and good python support, which makes for a compelling argument).
+
+##  Conclusion
+
+This past has kept me very busy. There were moments when I would wonder if this project will ever finish. Writing an Asset Management System is quite an undertaking which is one of the reasons the smaller studios tend to overlook the benefits it brings to the table. Its not that they are not aware of it, it just takes time and resources to develop.
+
+There is still a lot of work to be done in expanding the ancilliary tooling for **legos**. I am looking forward to implementing a feature rich Asset Browser, an application for production analytics as well as continuing integration of **legos** into Houdini, Blender and Gaffer. The new year looks very promising indeed!
+
+I hope this inspires you to think about how you can benefit from an AMS and also wets your apetite for graph based databases.
