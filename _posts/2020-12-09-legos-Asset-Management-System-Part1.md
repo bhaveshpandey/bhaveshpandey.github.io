@@ -154,7 +154,7 @@ Additionally [Gaffer](https://www.gafferhq.org) integration would be pretty cool
 
 ##  Conclusion
 
-This past has kept me very busy. There were moments when I would wonder if this project will ever finish. Writing an Asset Management System is quite an undertaking which is one of the reasons the smaller studios tend to overlook the benefits it brings to the table. Its not that they are not aware of it, it just takes time and resources to develop.
+This year has kept me very busy. There were moments when I would wonder if this project will ever finish. Writing an Asset Management System is quite an undertaking which is one of the reasons the smaller studios tend to overlook the benefits it brings to the table. Its not that they are not aware of it, it just takes time and resources to develop.
 
 There is still a lot of work to be done in expanding the ancilliary tooling for **legos**. I am looking forward to implementing a feature rich Asset Browser, an application for production analytics as well as continuing integration of **legos** into Houdini, Blender and Gaffer. The new year looks very promising indeed!
 
