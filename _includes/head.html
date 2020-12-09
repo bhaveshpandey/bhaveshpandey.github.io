@@ -5,6 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="{{ site.description }}">
 
+    <!-- Injecting image and subtitle data so the header-img and subtitle show up
+    when sharing on Facebook and other platforms.
+    Referenced from following link
+    https://wiseodd.github.io/techblog/2016/08/15/jekyll-fb-share/
+    -->
+    {% if page.header-img %}
+        <meta property="og:image" content="{{site.url}}/{{page.header-img}}">
+    {% endif %}
+    <meta property="og:description" content="{{page.subtitle}}">
+
     <title>{% if page.title %}{{ page.title }} - {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
 
     <link rel="canonical" href="{{ page.url | replace:'index.html','' | prepend: site.baseurl | prepend: site.url }}">
