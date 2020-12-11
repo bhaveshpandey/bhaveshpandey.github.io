@@ -136,9 +136,9 @@ Following image shows a bare-bones example of a schema (complete schema of legos
 
 Following screenshot shows slightly larger part of the database. This is where Neo4j actually starts to shine as a database tool. The visual information that we can get by simply observing the graph lets us quickly identify patterns and visually inspect the database! You can see in the image below (Figure 10), most of the asset nodes are clustered around different **Users** since they are generating a lot of assets. Additionally most of the assets are also clustered around **Packages** which are referencing these assets. You can then run queries which are simply not possible out of the box (or will take quite a lot of python) in other databases such as:
 
-* What are the Packages which have similar contents?
+* Which Packages have similar contents?
 
-* What Packages share maximum number of assets?
+* Which Packages share maximum number of assets?
 
 * How long does a complete iteration of an Asset take? (aggregating time taken to generate each dependency of an asset)?
 
@@ -157,6 +157,6 @@ Additionally [Gaffer](https://www.gafferhq.org) integration would be pretty cool
 
 This year has kept me very busy. There were moments when I would wonder if this project will ever finish. Writing an Asset Management System is quite an undertaking which is one of the reasons the smaller studios tend to overlook the benefits it brings to the table. Its not that they are not aware of it, it just takes time and resources to develop.
 
-There is still a lot of work to be done in expanding the ancilliary tooling for **legos**. I am looking forward to implementing a feature rich Asset Browser, an application for production analytics as well as continuing integration of **legos** into Houdini, Blender and Gaffer. The new year looks very promising indeed!
+There is still a lot of work to be done in expanding the ancilliary tooling for **legos**. I am looking forward to implementing a feature rich Asset Browser, an application for production analytics as well as continue integration of **legos** into Houdini, Blender and Gaffer. The new year looks very promising indeed!
 
 I hope this inspires you to think about how you can benefit from an AMS and also wets your appetite for graph based databases.
