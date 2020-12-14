@@ -159,4 +159,4 @@ This year has kept me very busy. There were moments when I would wonder if this 
 
 There is still a lot of work to be done in expanding the ancilliary tooling for **legos**. I am looking forward to implementing a feature rich Asset Browser, an application for production analytics as well as continue integration of **legos** into Houdini, Blender and Gaffer. The new year looks very promising indeed!
 
-I hope this inspires you to think about how you can benefit from an AMS and also wets your appetite for graph based databases.
+I hope this inspires you to think about how you can benefit from an AMS and also whets your appetite for graph based databases.
