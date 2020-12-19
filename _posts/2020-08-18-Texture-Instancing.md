@@ -122,13 +122,13 @@ Now lets try this on geometry slightly more exciting than a planar grid. In the 
 
 Another, key point to keep in mind is that there are no UVs on the mesh. The algorithm uses Tri-Planar projection algorithm to generate an implicit UV map which is used for sampling textures.
 
-<iframe width="420" height="236" src="https://www.youtube.com/embed/AnYkQN3xzjo?autoplay=1&loop=1&playlist=AnYkQN3xzjo" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe> 
+{% include image.html url="/img/projects/texture_instancing/rtoy_texInstance_normal.gif" description="Texture instancing using only colour maps. Rendered using Houdini's new Karma renderer."%}
 
 As we are now looking up more than one point, the colour contribution of each point is computed and result is set as the new colour on the mesh. Note the blending that happens between different textures is handled using inverse distance weighting, meaning, for each point in the mesh, closest found point in the point cloud will have maximum influence.
 
 Extending this further, we will also hook in our displacement maps specific to each of the 4 colour maps to compute the displacement at each point of the mesh. In the following example we use texture instancing to compute displacement along with colour using 4 different textures. All the other parameters (scale, orientation, blending exponent etc) are same as previous example.
 
-<iframe width="420" height="236" src="https://www.youtube.com/embed/hg-PO1tSHZA?autoplay=1&loop=1&playlist=hg-PO1tSHZA" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+{% include image.html url="/img/projects/texture_instancing/rtoy_texInstance_disp.gif" description="Added displacement maps to displace the geometry. Rendered using Houdini's new Karma renderer."%}
 
 If you look closely in the above example, you will see that the silhouette is being broken by displacements which are computed using the various displacement maps as defined by the point cloud.
 
